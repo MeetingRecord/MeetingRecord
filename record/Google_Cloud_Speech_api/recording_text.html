@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<!-- http://www.mura-lab.info/ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <title>音声認識</title>
+  <style>
+    button.put {
+      width: 70px;
+    }
+
+    textarea {
+      width: 50%;
+      height: 20em;
+    }
+  </style>
+</head>
+
+<body>
+  <center>
+    １文後に2秒おくと改行されます<br>
+    <button id="button" onclick="toggleStartStop()" class="put"> </button>
+    <button onclick=" kuten()" class="put">区点追加</button>
+    <button onclick="Clipboard()" class="put">コピー</button>
+    <button id="clear" onclick="textClear()" class="put">クリア</button></p>
+    <textarea id="Text1" class="Text" onkeyup="ShowLength(value);"></textarea><br>
+    <p id="inputlength">文字数=0 ※最後にエンターキーを押すとカウントします。</p>
+  </center>
+  <script type="text/javascript">
+    // 音声認識処理 　参考　https://wicg.github.io/speech-api/#examples-recognition
+    var recognizing;
+    window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
+    var recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.lang = 'ja';
+    recognition.interimResults = true;
+    stop();
+    recognition.onend = stop;
+    recognition.onresult = function (event) {
+      var results = event.results;
+      for (var i = event.resultIndex; i < results.length; ++i) {
+        if (results[i].isFinal) {
+          document.getElementById('Text1').value += results[i][0].transcript + "\n";
+        }
+      }
+    }
+    function stop() {
+      recognizing = false;
+      button.innerHTML = "音声認識";
+    }
+    function toggleStartStop() {
+      if (recognizing) {
+        recognition.stop();
+        stop();
+      }
+      else {
+        recognition.start();
+        recognizing = true;
+        button.innerHTML = "停止";
+      }
+    }
+
+  </script>
+  <script type="text/javascript">
+    // 文末に区点を追加
+    function kuten() {
+      var input = document.getElementById("Text1").value;
+      ar = new Array(
+        [/\n/g, '。\n'],
+        [/。。/g, '。'],
+      );
+      for (let i = 0; i < ar.length; i++) {	//変換ループ
+        var result = input.replace(ar[i][0], ar[i][1]);
+        var input = result;
+        document.getElementById("Text1").value = result;	//変換結果出力
+      }
+    }
+    // テキストをクリップボードにコピー
+    function Clipboard() {
+      var copyTarget = document.getElementById("Text1");
+      copyTarget.select();
+      document.execCommand("Copy");
+    }
+    // テキストボックスのクリア
+    function textClear() {
+      document.getElementById('Text1').value = "";
+    }
+    //文字列カウント
+    function ShowLength(str) {
+      str = str.replace(/\n/g, "");
+      document.getElementById("inputlength").innerHTML = "文字数=" + str.length;
+    }
+  </script>
+</body>
+
+</html>

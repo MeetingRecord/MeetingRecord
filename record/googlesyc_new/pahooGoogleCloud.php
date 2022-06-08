@@ -20,7 +20,7 @@ class pahooGoogleCloud {
 
 	//Google API KEY
 	//https://developers.google.com/maps/web/
-	var $GOOGLE_API_KEY = '**************************';
+	var $GOOGLE_API_KEY = 'AIzaSyBKskZyWoEbumQ0OGMqC-jowSEEsovAIUg';
 
 /**
  * コンストラクタ
