@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>username: <input type="text" id="id_input_name" /></div>
+    <div>
+      password: <input type="text" id="id_input_password" autocomplete="off" />
+    </div>
+    <div>
+      <button class="button_user_register" id="id_button_user_register">
+        Register
+      </button>
+    </div>
+    <a href="login.html">or login</a>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="module">
+      import { DataBaseAccessProxy } from "./databaseAccessProxy.js";
+
+      /**********ユーザ登録ボタンクリックイベントハンドラ**********/
+      $("#id_button_user_register").on("click", () => {
+        // ユーザ名取得
+        let userName = $("#id_input_name").val();
+        // PW取得
+        let pw = $("#id_input_password").val();
+        console.log(userName + " , " + pw);
+
+        // ユーザ追加
+        DataBaseAccessProxy.AddUser(userName, pw).then((addSuccess) => {
+          console.log(addSuccess);
+          // ログイン情報判定結果チェック
+          if (!addSuccess) {
+            alert(
+              "すでに登録済みのユーザか、もしくはユーザ登録に失敗しました。"
+            );
+          }
+        });
+
+        // 入力をクリアする
+        $("#id_input_name").val("");
+        $("#id_input_password").val("");
+      });
+    </script>
+  </body>
+</html>
