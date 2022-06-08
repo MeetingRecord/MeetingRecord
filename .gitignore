@@ -1,2 +1,4 @@
 sample/DB/common/databaseDef.php
 sample/Chat/databaseDef.php
+meeting_place/databaseDef.php
+meeting_place/serverDef.js
