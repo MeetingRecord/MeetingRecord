@@ -1,6 +1,7 @@
 table {
   table-layout: fixed;
   height: 1px;
+  width: 60%;
 }
 
 td {
@@ -72,7 +73,8 @@ td {
 /*チャットのフィールド*/
 #id_chat_view_field {
   width: 100%;
-  min-height: 100vh;
+  /* min-height: 100vh; */
+  min-height: 82.7vh; 
   padding: 7px 0 14px;
   box-sizing: border-box;
   background-color: #EEE;
@@ -82,7 +84,7 @@ td {
   /*縦向きのスクロール許可*/
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-  /*IE、Edgeでスクロールバーを非表示にする*/
+  /* IE、Edgeでスクロールバーを非表示にする */
   -ms-overflow-style: none;
   display: flex;
   justify-content: flex-start;
@@ -175,3 +177,56 @@ td {
 .right {
   text-align: right;
 }
+
+.channelListManagement {
+  width: 100%;
+  min-height: 100vh;
+  border-style: solid;
+  border-width: 1px;
+  background-color:rgb(94, 200, 130);
+  border-color: black;
+  text-align: left;
+  color: white;
+}
+
+.channelText {
+  width: 20%;
+}
+
+/* #id_chat_view_field {
+  width: 100%;
+  min-height: 100vh;
+  border-style: solid;
+  border-width: 1px;
+  border-color:black;
+}  */
+
+.main_content {
+  display: flex;
+  width: 100%;
+}
+
+.recording_button {
+  width: 15%;
+}
+
+.recognitionResult {
+  width: 500px;
+}
+
+.recording_table {
+  width: 100%;
+}
+
+.text {
+  width: 100%;
+}
+
+.channel_content {
+  width: 20%;
+}
+
+.recording_place {
+  width: 80%;
+  height: 100%;
+} 
