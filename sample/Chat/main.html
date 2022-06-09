@@ -10,6 +10,13 @@
   <body>
     <!--<a href="login.html">ログイン画面</a>-->
     <h1>チャット画面</h1>
+    <div>
+      <label for="id_channel_name">チャンネル名</label>
+      <input type="text" id="id_channel_name" />
+      <input type="button" value="Add" id="id_button_channel_add" />
+      <label for="id_selected_channel_name">選択中チャンネル名</label>
+      <input type="text" id="id_selected_channel_name" />
+    </div>
     <!--テキスト表示画面-->
     <div id="id_chat_view_field">
       <!--書き込み済チャットテキスト-->
@@ -25,6 +32,8 @@
     <script type="module">
       import { DataBaseAccessProxy } from "./databaseAccessProxy.js";
 
+      // 現在選択中のチャンネル名
+      let currentChannelName = "";
       // 現在ログインしているユーザ名
       let currentUserName = "";
 
@@ -60,13 +69,18 @@
 
       // チャットテキスト一覧更新
       function refreshChatTextList() {
-        let channelName = "ch001";
+        let channelName = $("#id_selected_channel_name").val();
+
+        // チャンネル名が指定されていない場合はスキップ
+        if (channelName == "") {
+          return;
+        }
         // チャットテキスト一覧取得
         DataBaseAccessProxy.GetChatList(channelName).then((chatList) => {
           // リストをクリア
-          const chat_list = document.getElementById("id_chat_list");
-          while (chat_list.firstChild) {
-            chat_list.removeChild(chat_list.firstChild);
+          const chat_list_element = document.getElementById("id_chat_list");
+          while (chat_list_element.firstChild) {
+            chat_list_element.removeChild(chat_list_element.firstChild);
           }
 
           //console.log(chatList);
@@ -82,17 +96,39 @@
 
       // チャット送信ボタン
       $("#id_button_chat_send").on("click", () => {
+        let channelName = $("#id_selected_channel_name").val();
         let postTargetText = $("#id_chat_input").val();
 
         // チャットテキスト送信
-        DataBaseAccessProxy.PostChatText(postTargetText).then((postSuccess) => {
-          //console.log(postSuccess);
+        DataBaseAccessProxy.PostChatText(channelName, postTargetText).then(
+          (postSuccess) => {
+            //console.log(postSuccess);
+            // 送信結果チェック
+            if (postSuccess) {
+              let isMe = true;
+              let userName = "anonymous";
+              displayChat(postTargetText, isMe, userName);
+              //console.log(postTargetText);
+            } else {
+              alert("チャット送信に失敗しました。");
+            }
+          }
+        );
+
+        // 送信後にテキストをクリアする
+        $("#id_chat_input").val("");
+      });
+
+      // チャンネル追加ボタン
+      $("#id_button_channel_add").on("click", () => {
+        let channelName = $("#id_channel_name").val();
+
+        // チャットテキスト送信
+        DataBaseAccessProxy.AddChannel(channelName).then((success) => {
+          //console.log(success);
           // 送信結果チェック
-          if (postSuccess) {
-            let isMe = true;
-            let userName = "anonymous";
-            displayChat(postTargetText, isMe, userName);
-            console.log(postTargetText);
+          if (success) {
+            currentChannelName = channelName;
           } else {
             alert("チャット送信に失敗しました。");
           }

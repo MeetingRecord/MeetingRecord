@@ -9,7 +9,7 @@ export class DataBaseAccessProxy {
     params.append("username", userName);
     params.append("password", password);
     let result = await axios.post(SERVER_URL + SCRIPT_PATH + "doAuthenticate.php", params);
-    console.log(result.data);
+    //console.log(result.data);
     return result.data.result && (result.data.detail == "NORMAL_END");
   }
 
@@ -20,26 +20,40 @@ export class DataBaseAccessProxy {
     params.append("username", userName);
     params.append("password", password);
     let result = await axios.post(SERVER_URL + SCRIPT_PATH + "addUser.php", params);
-    console.log(result.data);
+    //console.log(result.data);
     return result.data.result && (result.data.detail == "NORMAL_END");
   }
 
+  // ユーザ追加
+  // channelName    :追加するチャンネル名 
+  static async AddChannel(channelName) {
+
+    let params = new URLSearchParams();
+    params.append("channelname", channelName);
+    let result = await axios.post(SERVER_URL + SCRIPT_PATH + "addChannel.php", params);
+    //console.log(result.data);
+    return result.data.result && (result.data.detail == "NORMAL_END");
+  }
+
+
   // チャットリスト取得
-  // channelName    :一覧取得するチャンネル名
+  // channelName    :チャンネル名
   static async GetChatList(channelName) {
 
     let params = new URLSearchParams();
-    params.append("channelName", channelName);
+    params.append("channelname", channelName);
     let result = await axios.post(SERVER_URL + SCRIPT_PATH + "getChatList.php", params);
-    //console.log(result.data.chatList);
+    //console.log(result.data);
     return result.data.chatList;
   }
 
   // チャット投稿
+  // channelName    :チャンネル名
   // chatText       :チャットテキスト
-  static async PostChatText(chatText) {
+  static async PostChatText(channelName, chatText) {
 
     let params = new URLSearchParams();
+    params.append("channelname", channelName);
     params.append("chattext", chatText);
     
     let result = await axios.post(SERVER_URL + SCRIPT_PATH + "postChatText.php", params)
