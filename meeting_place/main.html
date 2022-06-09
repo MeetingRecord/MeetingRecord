@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
-    <meta http-equiv="Content-Script-Type" content="text/javascript" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>transcription</title>
-    <script type="text/javascript" src="./Ami_voice/recorder.js"></script>
-    <script type="text/javascript" src="./Ami_voice/wrp.js"></script>
-    <script type="text/javascript" src="./Ami_voice/result.js"></script>
-    <link rel="stylesheet" href="./main.css" />
-  </head>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>transcription</title>
+  <script type="text/javascript" src="./Ami_voice/recorder.js"></script>
+  <script type="text/javascript" src="./Ami_voice/wrp.js"></script>
+  <script type="text/javascript" src="./Ami_voice/result.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="./main.css" />
+</head>
 
-  <body lang="ja">
+<body lang="ja">
+  <div class="main_content">
+    <!-- チャンネル作成 -->
+    <div class="channel_content">
+      <div class="channelListManagement">
+        <div class="addChannel" id="id_addChannel">+ チャンネルを追加する</div>
+        <div class="channelList">
+          <ul class="channelListUl" id="id_channelListUl"></ul>
+        </div>
+      </div>
+    </div>
+      
     <!-- <label for="id_app_key">AAPPKEY</label>
     <input type="text" id="id_app_key" />
     <input type="button" value="●" id="id_button_record_start" /> -->
@@ -35,564 +47,596 @@
       <input type="hidden" class="text" id="issueButton" />
       <!---------------- サーバーURL ----------------->
       <input type="hidden" class="text" id="serverURL" spellcheck="false" />
-      <table>
-        <!---------------- 接続エンジン ----------------->
-        <input
-          type="hidden"
-          class="text grammarFileNames"
-          spellcheck="false"
-          tabindex="3"
-        />
-        <tr class="options" style="display: none">
-          <td>&nbsp;プロファイル ID</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="profileId"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <tr class="options" style="display: none">
-          <td>&nbsp;プロファイル単語</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="profileWords"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <tr class="options" style="display: none">
-          <td>&nbsp;セグメンタプロパティ文字列</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="segmenterProperties"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <tr class="options" style="display: none">
-          <td>&nbsp;フィラー単語を保持するかどうか</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="keepFillerToken"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <tr class="options" style="display: none">
-          <td>&nbsp;認識中イベント発行間隔 (単位：ミリ秒)</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="resultUpdatedInterval"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <tr class="options" style="display: none">
-          <td>&nbsp;拡張情報</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="extension"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>&nbsp;APPKEY</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="authorization"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <tr class="options" style="display: none">
-          <td>&nbsp;<font color="silver">音声データ形式</font></td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="codec"
-              spellcheck="false"
-              tabindex="3"
-              readonly
-            />
-          </td>
-        </tr>
-        <tr class="options" style="display: none">
-          <td>&nbsp;認識結果タイプ</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="resultType"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <tr class="options" style="display: none">
-          <td>&nbsp;無発話許容時間 (単位：ミリ秒)</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="checkIntervalTime"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <tr class="options" style="display: none">
-          <td>&nbsp;連続録音可能時間 (単位: ミリ秒)</td>
-          <td>
-            <input
-              type="text"
-              class="text"
-              id="maxRecordingTime"
-              spellcheck="false"
-              tabindex="3"
-            />
-          </td>
-        </tr>
-        <!-- 録音の開始 -->
-        <tr>
-          <td>
-            <button class="text" id="resumePauseButton" tabindex="5">
-              録音の開始
-            </button>
-          </td>
-          <td class="recognitionResult">
-            <span class="recognitionResultText"></span
-            ><span class="recognitionResultInfo"></span>
-          </td>
-        </tr>
-      </table>
-      <div class="bar">
-        <hr />
-        <div id="version"></div>
+      <div class="recording_place">
+        <table class="recording_table">
+          <!---------------- 接続エンジン ----------------->
+          <input
+            type="hidden"
+            class="text grammarFileNames"
+            spellcheck="false"
+            tabindex="3"
+          />
+          <tr class="options" style="display: none">
+            <td>&nbsp;プロファイル ID</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="profileId"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <tr class="options" style="display: none">
+            <td>&nbsp;プロファイル単語</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="profileWords"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <tr class="options" style="display: none">
+            <td>&nbsp;セグメンタプロパティ文字列</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="segmenterProperties"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <tr class="options" style="display: none">
+            <td>&nbsp;フィラー単語を保持するかどうか</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="keepFillerToken"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <tr class="options" style="display: none">
+            <td>&nbsp;認識中イベント発行間隔 (単位：ミリ秒)</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="resultUpdatedInterval"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <tr class="options" style="display: none">
+            <td>&nbsp;拡張情報</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="extension"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="recording_button">&nbsp;APPKEY</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="authorization"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <tr class="options" style="display: none">
+            <td>&nbsp;<font color="silver">音声データ形式</font></td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="codec"
+                spellcheck="false"
+                tabindex="3"
+                readonly
+              />
+            </td>
+          </tr>
+          <tr class="options" style="display: none">
+            <td>&nbsp;認識結果タイプ</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="resultType"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <tr class="options" style="display: none">
+            <td>&nbsp;無発話許容時間 (単位：ミリ秒)</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="checkIntervalTime"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <tr class="options" style="display: none">
+            <td>&nbsp;連続録音可能時間 (単位: ミリ秒)</td>
+            <td>
+              <input
+                type="text"
+                class="text"
+                id="maxRecordingTime"
+                spellcheck="false"
+                tabindex="3"
+              />
+            </td>
+          </tr>
+          <!-- 録音の開始 -->
+          <tr>
+            <td class="recording_button">
+              <button class="text" id="resumePauseButton" tabindex="5">
+                録音の開始
+              </button>
+            </td>
+            <td class="recognitionResult">
+              <span class="recognitionResultText"></span
+              ><span class="recognitionResultInfo"></span>
+            </td>
+          </tr>
+        </table>
+          <div class="bar">
+            <hr />
+            <div id="version"></div>
+          </div>
+          <div id="messages"></div>
+          <div id="id_chat_view_field">
+            <!--書き込み済チャットテキスト-->
+            <ul id="id_chat_list"></ul>
       </div>
-      <div id="messages"></div>
-      <div id="id_chat_view_field">
-        <!--書き込み済チャットテキスト-->
-        <ul id="id_chat_list"></ul>
-      </div>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-      <script type="module">
-        import { DataBaseAccessProxy } from "./databaseAccessProxy.js";
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="module">
+    import { DataBaseAccessProxy } from "./databaseAccessProxy.js";
 
-        // 現在ログインしているユーザ名
-        let currentUserName = "";
+    // 現在ログインしているユーザ名
+    let currentUserName = "";
 
-        (function () {
-          // <!--
-          function log_(n, s) {
-            // console.log(n + s);
-            // console.log(s);
-            var color = "";
-            if (s.lastIndexOf("EVENT: ", 0) != -1) {
-              //    color = "green";
-            } else if (s.lastIndexOf("INFO: ", 0) != -1) {
-              //    color = "blue";
-            } else if (s.lastIndexOf("ERROR: ", 0) != -1) {
-              color = "red";
+    (function () {
+      // <!--
+      function log_(n, s) {
+        // console.log(n + s);
+        // console.log(s);
+        var color = "";
+        if (s.lastIndexOf("EVENT: ", 0) != -1) {
+          //    color = "green";
+        } else if (s.lastIndexOf("INFO: ", 0) != -1) {
+          //    color = "blue";
+        } else if (s.lastIndexOf("ERROR: ", 0) != -1) {
+          color = "red";
+        } else {
+          color = "black";
+        }
+        if (color) {
+          if (messages.childNodes.length >= 20) {
+            messages.removeChild(messages.lastChild);
+          }
+        }
+      }
+      function sanitize_(s) {
+        return s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/'/g, "&apos;")
+        .replace(/"/g, "&quot;");
+      }
+      // -->
+      // 音声認識サーバへの接続処理が開始した時に呼び出されます。
+      function connectStarted() {
+        log_(this.name, "EVENT: connectStarted()");
+      }
+
+      // 音声認識サーバへの接続処理が完了した時に呼び出されます。
+      function connectEnded() {
+        log_(this.name, "EVENT: connectEnded()");
+      }
+
+      // 音声認識サーバからの切断処理が開始した時に呼び出されます。
+      function disconnectStarted() {
+        log_(this.name, "EVENT: disconnectStarted()");
+      }
+
+      // 音声認識サーバからの切断処理が完了した時に呼び出されます。
+      function disconnectEnded() {
+        log_(this.name, "EVENT: disconnectEnded()");
+        // ボタンの制御
+        resumePauseButton.innerHTML = "録音の開始";
+        resumePauseButton.disabled = false;
+        resumePauseButton.classList.remove("sending");
+      }
+
+      // 音声認識サーバへの音声データの供給開始処理が開始した時に呼び出されます。
+      function feedDataResumeStarted() {
+        log_(this.name, "EVENT: feedDataResumeStarted()");
+      }
+
+      // 音声認識サーバへの音声データの供給開始処理が完了した時に呼び出されます。
+      function feedDataResumeEnded() {
+        log_(this.name, "EVENT: feedDataResumeEnded()");
+        // ボタンの制御
+        resumePauseButton.innerHTML =
+          '<br><br>音声データの録音中...<br><br><span class="supplement">クリック → 録音の停止</span>';
+        resumePauseButton.disabled = false;
+        resumePauseButton.classList.add("sending");
+      }
+
+      // 音声認識サーバへの音声データの供給終了処理が開始した時に呼び出されます。
+      function feedDataPauseStarted() {
+        log_(this.name, "EVENT: feedDataPauseStarted()");
+      }
+
+      // 音声認識サーバへの音声データの供給終了処理が完了した時に呼び出されます。
+      function feedDataPauseEnded(reason) {
+        log_(
+          this.name,
+          "EVENT: feedDataPauseEnded(): reason[code[" +
+            reason.code +
+            "] message[" +
+            reason.message +
+            "]]"
+        );
+      }
+
+      // 発話区間の始端が検出された時に呼び出されます。
+      function utteranceStarted(startTime) {
+        log_(
+          this.name,
+          "EVENT: utteranceStarted(): endTime[" + startTime + "]"
+        );
+      }
+
+      // 発話区間の終端が検出された時に呼び出されます。
+      function utteranceEnded(endTime) {
+        log_(
+          this.name,
+          "EVENT: utteranceEnded(): endTime[" + endTime + "]"
+        );
+      }
+
+      // 認識処理が開始された時に呼び出されます。
+      function resultCreated() {
+        log_(this.name, "EVENT: resultCreated()");
+        this.recognitionResultText.innerHTML = "...";
+        this.recognitionResultInfo.innerHTML = "";
+        this.startTime = new Date().getTime();
+      }
+
+      // 認識処理中に呼び出されます。
+      function resultUpdated(result) {
+        log_(this.name, "EVENT: resultUpdated(): result[" + result + "]");
+        result = Result.parse(result);
+        var text = result.text ? sanitize_(result.text) : "...";
+        this.recognitionResultText.innerHTML = text;
+      }
+
+      // 送信済みチャットを画面表示する関数
+      // text     :送信済みチャット
+      // isMe     :チャット送信者が自分であるかのフラグ
+      // userName :チャット送信者名
+      function displayChat(text, isMe, userName) {
+        // 一番下までスクロール
+        const field = document.getElementById("id_chat_view_field");
+        field.scroll(0, field.scrollHeight - field.clientHeight);
+
+        const ul = document.getElementById("id_chat_list");
+        const li = document.createElement("li");
+        // このdivにテキストを指定
+        const div = document.createElement("div");
+        div.textContent = text;
+
+        if (isMe) {
+          // 自分
+          div.classList.add("chat-right");
+          li.classList.add("right");
+          ul.appendChild(li);
+          li.appendChild(div);
+        } else {
+          // 自分以外のユーザ
+          li.classList.add("left");
+          div.classList.add("chat-left");
+          ul.appendChild(li);
+          li.appendChild(div);
+        }
+      }
+
+      // チャットテキスト一覧更新
+      function refreshChatTextList() {
+        let channelName = "ch001";
+        // チャットテキスト一覧取得
+        DataBaseAccessProxy.GetChatList(channelName).then((chatList) => {
+          // リストをクリア
+          const chat_list = document.getElementById("id_chat_list");
+          while (chat_list.firstChild) {
+            chat_list.removeChild(chat_list.firstChild);
+          } 
+
+          //console.log(chatList);
+          chatList.forEach((element) => {
+            let isMe = true;
+            if (element["username"] != currentUserName) {
+              isMe = false;
+            }
+            displayChat(element["chat"], isMe, element["username"]);
+          });
+        });
+      }
+
+      // 認識処理が確定した時に呼び出されます。
+      function resultFinalized(result) {
+        log_(this.name, "EVENT: resultFinalized(): result[" + result + "]");
+        result = Result.parse(result);
+        var text = result.text
+          ? sanitize_(result.text)
+          : result.code != "o" && result.message
+          ? '<font color="gray">(' + result.message + ")</font>"
+          : '<font color="gray">(なし)</font>';
+        var duration = result.duration;
+        var elapsedTime = new Date().getTime() - this.startTime;
+        var confidence = result.confidence;
+        var rt =
+          (duration > 0 ? (elapsedTime / duration).toFixed(2) : "-") +
+          " (" +
+          (elapsedTime / 1000).toFixed(2) +
+          "/" +
+          (duration > 0 ? (duration / 1000).toFixed(2) : "-") +
+          ")";
+        var cf = confidence >= 0.0 ? confidence.toFixed(2) : "-";
+        this.recognitionResultText.innerHTML = text;
+        this.recognitionResultInfo.innerHTML =
+          "RT: " + rt + "<br>CF: " + cf;
+        log_(
+          this.name,
+          text +
+            ' <font color="darkgray">(RT: ' +
+            rt +
+            ") (CF: " +
+            cf +
+            ")</font>"
+        );
+
+        //console.log("認識されたテキスト：" + result.text);
+        // チャットテキスト送信
+        DataBaseAccessProxy.PostChatText(result.text).then(
+          (postSuccess) => {
+            //console.log(postSuccess);
+            // 送信結果チェック
+            if (postSuccess) {
+              let isMe = true;
+              let userName = "anonymous";
+              displayChat(result.text, isMe, userName);
+              //console.log("送信成功");
             } else {
-              color = "black";
-            }
-            if (color) {
-              if (messages.childNodes.length >= 20) {
-                messages.removeChild(messages.lastChild);
-              }
+              console.log("ERROR: チャット送信失敗");
+              //alert("チャット送信に失敗しました。");
             }
           }
-          function sanitize_(s) {
-            return s
-              .replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/'/g, "&apos;")
-              .replace(/"/g, "&quot;");
-          }
-          // -->
-          // 音声認識サーバへの接続処理が開始した時に呼び出されます。
-          function connectStarted() {
-            log_(this.name, "EVENT: connectStarted()");
-          }
+        );
+      }
 
-          // 音声認識サーバへの接続処理が完了した時に呼び出されます。
-          function connectEnded() {
-            log_(this.name, "EVENT: connectEnded()");
-          }
+      // 各種イベントが通知された時に呼び出されます。
+      function eventNotified(eventId, eventMessage) {
+        log_(
+          this.name,
+          "EVENT: eventNotified(): eventId[" +
+            eventId +
+            "] eventMessage[" +
+            eventMessage +
+            "]"
+        );
+      }
 
-          // 音声認識サーバからの切断処理が開始した時に呼び出されます。
-          function disconnectStarted() {
-            log_(this.name, "EVENT: disconnectStarted()");
-          }
+      // メッセージの出力が要求された時に呼び出されます。
+      function TRACE(message) {
+        log_(this.name || "", message);
+      }
 
-          // 音声認識サーバからの切断処理が完了した時に呼び出されます。
-          function disconnectEnded() {
-            log_(this.name, "EVENT: disconnectEnded()");
+      // 画面要素の取得
+      var issuerURL = document.getElementById("issuerURL");
+      var sid = document.getElementById("sid");
+      var spw = document.getElementById("spw");
+      var epi = document.getElementById("epi");
+      var issueButton = document.getElementById("issueButton");
+      var grammarFileNames =
+        document.getElementsByClassName("grammarFileNames");
+      var recognitionResultText = document.getElementsByClassName(
+        "recognitionResultText"
+      );
+      var recognitionResultInfo = document.getElementsByClassName(
+        "recognitionResultInfo"
+      );
+
+        // 画面要素の初期化
+        issuerURL.value =
+          "https://acp-api.amivoice.com/issue_service_authorization";
+        serverURL.value = "wss://acp-api.amivoice.com/v1/";
+        grammarFileNames[0].value = Wrp.grammarFileNames;
+        profileId.value = Wrp.profileId;
+        profileWords.value = Wrp.profileWords;
+        segmenterProperties.value = Wrp.segmenterProperties;
+        keepFillerToken.value = Wrp.keepFillerToken;
+        resultUpdatedInterval.value = Wrp.resultUpdatedInterval;
+        extension.value = Wrp.extension;
+        authorization.value = Wrp.authorization;
+        codec.value = Wrp.codec;
+        resultType.value = Wrp.resultType;
+        checkIntervalTime.value = Wrp.checkIntervalTime;
+        maxRecordingTime.value = Recorder.maxRecordingTime;
+
+        // 音声認識ライブラリのプロパティ要素の設定
+        Wrp.serverURLElement = serverURL;
+        Wrp.grammarFileNamesElement = grammarFileNames[0];
+        Wrp.profileIdElement = profileId;
+        Wrp.profileWordsElement = profileWords;
+        Wrp.segmenterPropertiesElement = segmenterProperties;
+        Wrp.keepFillerTokenElement = keepFillerToken;
+        Wrp.resultUpdatedIntervalElement = resultUpdatedInterval;
+        Wrp.extensionElement = extension;
+        Wrp.authorizationElement = authorization;
+        Wrp.codecElement = codec;
+        Wrp.resultTypeElement = resultType;
+        Wrp.checkIntervalTimeElement = checkIntervalTime;
+        Wrp.issuerURLElement = issuerURL;
+        Wrp.sidElement = sid;
+        Wrp.spwElement = spw;
+        Wrp.epiElement = epi;
+        Wrp.name = "";
+        Wrp.recognitionResultText = recognitionResultText[0];
+        Wrp.recognitionResultInfo = recognitionResultInfo[0];
+
+        // 音声認識ライブラリのイベントハンドラの設定
+        Wrp.connectStarted = connectStarted;
+        Wrp.connectEnded = connectEnded;
+        Wrp.disconnectStarted = disconnectStarted;
+        Wrp.disconnectEnded = disconnectEnded;
+        Wrp.feedDataResumeStarted = feedDataResumeStarted;
+        Wrp.feedDataResumeEnded = feedDataResumeEnded;
+        Wrp.feedDataPauseStarted = feedDataPauseStarted;
+        Wrp.feedDataPauseEnded = feedDataPauseEnded;
+        Wrp.utteranceStarted = utteranceStarted;
+        Wrp.utteranceEnded = utteranceEnded;
+        Wrp.resultCreated = resultCreated;
+        Wrp.resultUpdated = resultUpdated;
+        Wrp.resultFinalized = resultFinalized;
+        Wrp.eventNotified = eventNotified;
+        Wrp.TRACE = TRACE;
+
+        // 録音ライブラリのプロパティ要素の設定
+        Recorder.maxRecordingTimeElement = maxRecordingTime;
+
+        // 音声認識ライブラリ／録音ライブラリのメソッドの画面要素への登録
+        resumePauseButton.onclick = function () {
+          // 音声認識サーバへの音声データの供給中かどうかのチェック
+          if (Wrp.isActive()) {
+            // 音声認識サーバへの音声データの供給中の場合...
+            // 音声認識サーバへの音声データの供給の停止
+            Wrp.feedDataPause();
+
             // ボタンの制御
-            resumePauseButton.innerHTML = "録音の開始";
-            resumePauseButton.disabled = false;
-            resumePauseButton.classList.remove("sending");
-          }
-
-          // 音声認識サーバへの音声データの供給開始処理が開始した時に呼び出されます。
-          function feedDataResumeStarted() {
-            log_(this.name, "EVENT: feedDataResumeStarted()");
-          }
-
-          // 音声認識サーバへの音声データの供給開始処理が完了した時に呼び出されます。
-          function feedDataResumeEnded() {
-            log_(this.name, "EVENT: feedDataResumeEnded()");
-            // ボタンの制御
-            resumePauseButton.innerHTML =
-              '<br><br>音声データの録音中...<br><br><span class="supplement">クリック → 録音の停止</span>';
-            resumePauseButton.disabled = false;
-            resumePauseButton.classList.add("sending");
-          }
-
-          // 音声認識サーバへの音声データの供給終了処理が開始した時に呼び出されます。
-          function feedDataPauseStarted() {
-            log_(this.name, "EVENT: feedDataPauseStarted()");
-          }
-
-          // 音声認識サーバへの音声データの供給終了処理が完了した時に呼び出されます。
-          function feedDataPauseEnded(reason) {
-            log_(
-              this.name,
-              "EVENT: feedDataPauseEnded(): reason[code[" +
-                reason.code +
-                "] message[" +
-                reason.message +
-                "]]"
-            );
-          }
-
-          // 発話区間の始端が検出された時に呼び出されます。
-          function utteranceStarted(startTime) {
-            log_(
-              this.name,
-              "EVENT: utteranceStarted(): endTime[" + startTime + "]"
-            );
-          }
-
-          // 発話区間の終端が検出された時に呼び出されます。
-          function utteranceEnded(endTime) {
-            log_(
-              this.name,
-              "EVENT: utteranceEnded(): endTime[" + endTime + "]"
-            );
-          }
-
-          // 認識処理が開始された時に呼び出されます。
-          function resultCreated() {
-            log_(this.name, "EVENT: resultCreated()");
-            this.recognitionResultText.innerHTML = "...";
-            this.recognitionResultInfo.innerHTML = "";
-            this.startTime = new Date().getTime();
-          }
-
-          // 認識処理中に呼び出されます。
-          function resultUpdated(result) {
-            log_(this.name, "EVENT: resultUpdated(): result[" + result + "]");
-            result = Result.parse(result);
-            var text = result.text ? sanitize_(result.text) : "...";
-            this.recognitionResultText.innerHTML = text;
-          }
-
-          // 送信済みチャットを画面表示する関数
-          // text     :送信済みチャット
-          // isMe     :チャット送信者が自分であるかのフラグ
-          // userName :チャット送信者名
-          function displayChat(text, isMe, userName) {
-            // 一番下までスクロール
-            const field = document.getElementById("id_chat_view_field");
-            field.scroll(0, field.scrollHeight - field.clientHeight);
-
-            const ul = document.getElementById("id_chat_list");
-            const li = document.createElement("li");
-            // このdivにテキストを指定
-            const div = document.createElement("div");
-            div.textContent = text;
-
-            if (isMe) {
-              // 自分
-              div.classList.add("chat-right");
-              li.classList.add("right");
-              ul.appendChild(li);
-              li.appendChild(div);
-            } else {
-              // 自分以外のユーザ
-              li.classList.add("left");
-              div.classList.add("chat-left");
-              ul.appendChild(li);
-              li.appendChild(div);
-            }
-          }
-
-          // チャットテキスト一覧更新
-          function refreshChatTextList() {
-            let channelName = "ch001";
-            // チャットテキスト一覧取得
-            DataBaseAccessProxy.GetChatList(channelName).then((chatList) => {
-              // リストをクリア
-              const chat_list = document.getElementById("id_chat_list");
-              while (chat_list.firstChild) {
-                chat_list.removeChild(chat_list.firstChild);
-              }
-
-              //console.log(chatList);
-              chatList.forEach((element) => {
-                let isMe = true;
-                if (element["username"] != currentUserName) {
-                  isMe = false;
-                }
-                displayChat(element["chat"], isMe, element["username"]);
-              });
-            });
-          }
-
-          // 認識処理が確定した時に呼び出されます。
-          function resultFinalized(result) {
-            log_(this.name, "EVENT: resultFinalized(): result[" + result + "]");
-            result = Result.parse(result);
-            var text = result.text
-              ? sanitize_(result.text)
-              : result.code != "o" && result.message
-              ? '<font color="gray">(' + result.message + ")</font>"
-              : '<font color="gray">(なし)</font>';
-            var duration = result.duration;
-            var elapsedTime = new Date().getTime() - this.startTime;
-            var confidence = result.confidence;
-            var rt =
-              (duration > 0 ? (elapsedTime / duration).toFixed(2) : "-") +
-              " (" +
-              (elapsedTime / 1000).toFixed(2) +
-              "/" +
-              (duration > 0 ? (duration / 1000).toFixed(2) : "-") +
-              ")";
-            var cf = confidence >= 0.0 ? confidence.toFixed(2) : "-";
-            this.recognitionResultText.innerHTML = text;
-            this.recognitionResultInfo.innerHTML =
-              "RT: " + rt + "<br>CF: " + cf;
-            log_(
-              this.name,
-              text +
-                ' <font color="darkgray">(RT: ' +
-                rt +
-                ") (CF: " +
-                cf +
-                ")</font>"
-            );
-
-            //console.log("認識されたテキスト：" + result.text);
-            // チャットテキスト送信
-            DataBaseAccessProxy.PostChatText(result.text).then(
-              (postSuccess) => {
-                //console.log(postSuccess);
-                // 送信結果チェック
-                if (postSuccess) {
-                  let isMe = true;
-                  let userName = "anonymous";
-                  displayChat(result.text, isMe, userName);
-                  //console.log("送信成功");
-                } else {
-                  console.log("ERROR: チャット送信失敗");
-                  //alert("チャット送信に失敗しました。");
-                }
-              }
-            );
-          }
-
-          // 各種イベントが通知された時に呼び出されます。
-          function eventNotified(eventId, eventMessage) {
-            log_(
-              this.name,
-              "EVENT: eventNotified(): eventId[" +
-                eventId +
-                "] eventMessage[" +
-                eventMessage +
-                "]"
-            );
-          }
-
-          // メッセージの出力が要求された時に呼び出されます。
-          function TRACE(message) {
-            log_(this.name || "", message);
-          }
-
-          // 画面要素の取得
-          var issuerURL = document.getElementById("issuerURL");
-          var sid = document.getElementById("sid");
-          var spw = document.getElementById("spw");
-          var epi = document.getElementById("epi");
-          var issueButton = document.getElementById("issueButton");
-          var grammarFileNames =
-            document.getElementsByClassName("grammarFileNames");
-          var recognitionResultText = document.getElementsByClassName(
-            "recognitionResultText"
-          );
-          var recognitionResultInfo = document.getElementsByClassName(
-            "recognitionResultInfo"
-          );
-
-          // 画面要素の初期化
-          issuerURL.value =
-            "https://acp-api.amivoice.com/issue_service_authorization";
-          serverURL.value = "wss://acp-api.amivoice.com/v1/";
-          grammarFileNames[0].value = Wrp.grammarFileNames;
-          profileId.value = Wrp.profileId;
-          profileWords.value = Wrp.profileWords;
-          segmenterProperties.value = Wrp.segmenterProperties;
-          keepFillerToken.value = Wrp.keepFillerToken;
-          resultUpdatedInterval.value = Wrp.resultUpdatedInterval;
-          extension.value = Wrp.extension;
-          authorization.value = Wrp.authorization;
-          codec.value = Wrp.codec;
-          resultType.value = Wrp.resultType;
-          checkIntervalTime.value = Wrp.checkIntervalTime;
-          maxRecordingTime.value = Recorder.maxRecordingTime;
-
-          // 音声認識ライブラリのプロパティ要素の設定
-          Wrp.serverURLElement = serverURL;
-          Wrp.grammarFileNamesElement = grammarFileNames[0];
-          Wrp.profileIdElement = profileId;
-          Wrp.profileWordsElement = profileWords;
-          Wrp.segmenterPropertiesElement = segmenterProperties;
-          Wrp.keepFillerTokenElement = keepFillerToken;
-          Wrp.resultUpdatedIntervalElement = resultUpdatedInterval;
-          Wrp.extensionElement = extension;
-          Wrp.authorizationElement = authorization;
-          Wrp.codecElement = codec;
-          Wrp.resultTypeElement = resultType;
-          Wrp.checkIntervalTimeElement = checkIntervalTime;
-          Wrp.issuerURLElement = issuerURL;
-          Wrp.sidElement = sid;
-          Wrp.spwElement = spw;
-          Wrp.epiElement = epi;
-          Wrp.name = "";
-          Wrp.recognitionResultText = recognitionResultText[0];
-          Wrp.recognitionResultInfo = recognitionResultInfo[0];
-
-          // 音声認識ライブラリのイベントハンドラの設定
-          Wrp.connectStarted = connectStarted;
-          Wrp.connectEnded = connectEnded;
-          Wrp.disconnectStarted = disconnectStarted;
-          Wrp.disconnectEnded = disconnectEnded;
-          Wrp.feedDataResumeStarted = feedDataResumeStarted;
-          Wrp.feedDataResumeEnded = feedDataResumeEnded;
-          Wrp.feedDataPauseStarted = feedDataPauseStarted;
-          Wrp.feedDataPauseEnded = feedDataPauseEnded;
-          Wrp.utteranceStarted = utteranceStarted;
-          Wrp.utteranceEnded = utteranceEnded;
-          Wrp.resultCreated = resultCreated;
-          Wrp.resultUpdated = resultUpdated;
-          Wrp.resultFinalized = resultFinalized;
-          Wrp.eventNotified = eventNotified;
-          Wrp.TRACE = TRACE;
-
-          // 録音ライブラリのプロパティ要素の設定
-          Recorder.maxRecordingTimeElement = maxRecordingTime;
-
-          // 音声認識ライブラリ／録音ライブラリのメソッドの画面要素への登録
-          resumePauseButton.onclick = function () {
-            // 音声認識サーバへの音声データの供給中かどうかのチェック
-            if (Wrp.isActive()) {
-              // 音声認識サーバへの音声データの供給中の場合...
-              // 音声認識サーバへの音声データの供給の停止
-              Wrp.feedDataPause();
+            resumePauseButton.disabled = true;
+          } else {
+            // 音声認識サーバへの音声データの供給中でない場合...
+            // グラマファイル名が指定されているかどうかのチェック
+            if (Wrp.grammarFileNamesElement.value != "") {
+              // グラマファイル名が指定されている場合...
+              // 音声認識サーバへの音声データの供給の開始
+              Wrp.feedDataResume();
 
               // ボタンの制御
               resumePauseButton.disabled = true;
             } else {
-              // 音声認識サーバへの音声データの供給中でない場合...
-              // グラマファイル名が指定されているかどうかのチェック
-              if (Wrp.grammarFileNamesElement.value != "") {
-                // グラマファイル名が指定されている場合...
-                // 音声認識サーバへの音声データの供給の開始
-                Wrp.feedDataResume();
-
-                // ボタンの制御
-                resumePauseButton.disabled = true;
-              } else {
-                // グラマファイル名が指定されていない場合...
-                // (何もしない)
-              }
-            }
-          };
-          issueButton.onclick = Wrp.issue;
-
-          var issue_options = document.querySelectorAll(".issue_options");
-          function toggle_issue_options() {
-            issue_options[0].style.display =
-              issue_options[0].style.display === "" ? "none" : "";
-            for (var i = 1; i < issue_options.length; i++) {
-              issue_options[i].style.display = issue_options[0].style.display;
+              // グラマファイル名が指定されていない場合...
+              // (何もしない)
             }
           }
-          var toggle_issue_optionss = document.querySelectorAll(
-            ".toggle_issue_options"
-          );
-          for (var i = 0; i < toggle_issue_optionss.length; i++) {
-            toggle_issue_optionss[i].onclick = toggle_issue_options;
-            toggle_issue_optionss[i].style.cursor = "pointer";
+        };
+        issueButton.onclick = Wrp.issue;
+
+        var issue_options = document.querySelectorAll(".issue_options");
+        function toggle_issue_options() {
+          issue_options[0].style.display =
+            issue_options[0].style.display === "" ? "none" : "";
+          for (var i = 1; i < issue_options.length; i++) {
+            issue_options[i].style.display = issue_options[0].style.display;
           }
+        }
+        var toggle_issue_optionss = document.querySelectorAll(
+          ".toggle_issue_options"
+        );
+        for (var i = 0; i < toggle_issue_optionss.length; i++) {
+          toggle_issue_optionss[i].onclick = toggle_issue_options;
+          toggle_issue_optionss[i].style.cursor = "pointer";
+        }
 
-          var options = document.querySelectorAll(".options");
-          function toggle_options() {
-            options[0].style.display =
-              options[0].style.display === "" ? "none" : "";
-            for (var i = 1; i < options.length; i++) {
-              options[i].style.display = options[0].style.display;
-            }
+        var options = document.querySelectorAll(".options");
+        function toggle_options() {
+          options[0].style.display =
+            options[0].style.display === "" ? "none" : "";
+          for (var i = 1; i < options.length; i++) {
+            options[i].style.display = options[0].style.display;
           }
-          var toggle_optionss = document.querySelectorAll(".toggle_options");
-          for (var i = 0; i < toggle_optionss.length; i++) {
-            toggle_optionss[i].onclick = toggle_options;
-            toggle_optionss[i].style.cursor = "pointer";
-          }
+        }
+        var toggle_optionss = document.querySelectorAll(".toggle_options");
+        for (var i = 0; i < toggle_optionss.length; i++) {
+          toggle_optionss[i].onclick = toggle_options;
+          toggle_optionss[i].style.cursor = "pointer";
+        }
 
-          // オンロード時処理
-          window.onload = function () {
-            // 呼び出しページからの引数(ログインユーザ名)を受け取り
-            let query = location.search;
-            let value = query.split("=");
-            currentUserName = decodeURIComponent(value[1]);
-            //console.log("login user name: " + currentUserName);
+        // オンロード時処理
+        window.onload = function () {
+          // 呼び出しページからの引数(ログインユーザ名)を受け取り
+          let query = location.search;
+          let value = query.split("=");
+          currentUserName = decodeURIComponent(value[1]);
+          //console.log("login user name: " + currentUserName);
 
-            // 画面ロード時に投稿済チャットの表示
-            refreshChatTextList();
-            setInterval(refreshChatTextList, 1000);
-          };
+          // 画面ロード時に投稿済チャットの表示
+          refreshChatTextList();
+          setInterval(refreshChatTextList, 1000);
+        };
 
-          version.innerHTML = Wrp.version;
-          //console.log(Wrp);
-        })();
-      </script>
-    </tr>
-  </body>
+        version.innerHTML = Wrp.version;
+        //console.log(Wrp);
+      })();
+
+      // 「チャンネル追加する」ボタンクリック時のイベントハンドラ
+      $("#id_addChannel").on("click", () => {
+        // チャンネル名の入力
+        const channelName = inputTextWithDialog("チャンネル名を入力してください");
+        if (channelName != null) {
+          // 親要素
+          var list = document.getElementById("id_channelListUl");
+          // 追加するチャンネル要素を作成
+          var li = document.createElement("li");
+          li.innerHTML = channelName;
+          li.className = "channelListItem";
+          // valueにlistの子要素数をセットして識別する
+          li.value = list.childElementCount;
+          // 末尾に追加
+          list.appendChild(li);
+          console.log(list);
+          ContentProxy.CreateChannel(channelName);
+        }
+      });
+
+      // 追加するチャンネル名の入力
+      // guideMessage：ダイアログに表示するガイド分
+      function inputTextWithDialog(guideMessage) {
+        // 入力ダイアログを表示
+        const inputText = window.prompt(guideMessage, "");
+        console.log("input text:" + inputText);
+        return inputText;
+      }
+    </script>
+  </tr>
+</body>
 </html>
