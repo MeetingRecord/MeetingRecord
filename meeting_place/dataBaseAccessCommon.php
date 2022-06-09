@@ -31,6 +31,36 @@ function _connectToDB($host, $port, $dbName, $charset, $user, $pwd)
   return $pdo;
 }
 
+// (チャンネル名から)チャンネルID取得
+function GetChannelIdFromChannelName($channel_name){
+
+  $pdo = ConnectToDB();
+
+  // チャンネル重複チェック
+  $sql = 'SELECT * FROM channel_table WHERE channel_name=:channel_name';
+  $stmt = $pdo->prepare($sql);
+  $stmt->bindValue(':channel_name', $channel_name, PDO::PARAM_STR);
+
+  try {
+    $status = $stmt->execute();
+  } catch (PDOException $e) {
+    $output = [
+    "result" => false,
+    "detail" => "{$e->getMessage()}",
+    ];
+    echo json_encode($output);
+    exit();
+  }
+
+  $val = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if ($val){
+    return $val["id"];
+  }else{
+    return -1;
+  }
+}
+
 // function check_session_id()
 // {
 //   if (

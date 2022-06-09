@@ -7,26 +7,24 @@ include("dataBaseAccessCommon.php");
 $pdo = ConnectToDB();
 
 if (
-  !isset($_POST['username']) || $_POST['username'] == '' ||
-  !isset($_POST['password']) || $_POST['password'] == ''
+  !isset($_POST['channelname']) || $_POST['channelname'] == ''
 ) {
   $output = [
   "result" => false,
   "detail" => "NO_INPUT",
-  "userName" => "",
-  "pw" => "",
+  "channelname" => "",
   ];
   echo json_encode($output);
   exit();
 }
 
-$username = $_POST["username"];
-$password = $_POST["password"];
+$channel_name = $_POST["channelname"];
 
-$sql = 'SELECT COUNT(*) FROM users_table WHERE username=:username';
+// チャンネル重複チェック
+$sql = 'SELECT COUNT(*) FROM channel_table WHERE channel_name=:channel_name';
 
 $stmt = $pdo->prepare($sql);
-$stmt->bindValue(':username', $username, PDO::PARAM_STR);
+$stmt->bindValue(':channel_name', $channel_name, PDO::PARAM_STR);
 
 try {
   $status = $stmt->execute();
@@ -34,8 +32,7 @@ try {
   $output = [
   "result" => false,
   "detail" => "{$e->getMessage()}",
-  "userName" => $username,
-  "pw" => $password,
+  "channelname" => $channel_name,
   ];
   echo json_encode($output);
   exit();
@@ -45,18 +42,17 @@ if ($stmt->fetchColumn() > 0) {
   $output = [
   "result" => true,
   "detail" => "ALREADY_EXIST",
-  "userName" => $username,
-  "pw" => $password,
+  "channelname" => $channel_name,
   ];
   echo json_encode($output);
   exit();
 }
 
-$sql = 'INSERT INTO users_table(id, username, password, is_admin, is_deleted, created_at, updated_at) VALUES(NULL, :username, :password, 0, 0, sysdate(), sysdate())';
+// チャンネル追加
+$sql = 'INSERT INTO channel_table(id, channel_name, is_deleted) VALUES(NULL, :channel_name, 0)';
 
 $stmt = $pdo->prepare($sql);
-$stmt->bindValue(':username', $username, PDO::PARAM_STR);
-$stmt->bindValue(':password', $password, PDO::PARAM_STR);
+$stmt->bindValue(':channel_name', $channel_name, PDO::PARAM_STR);
 
 try {
   $status = $stmt->execute();
@@ -64,8 +60,7 @@ try {
   $output = [
     "result" => false,
     "detail" => "{$e->getMessage()}",
-    "userName" => $username,
-    "pw" => $password,
+    "channelname" => $channel_name,
     ];
   echo json_encode($output);
   exit();
@@ -74,8 +69,7 @@ try {
 $output = [
   "result" => true,
   "detail" => "NORMAL_END",
-  "userName" => $username,
-  "pw" => $password,
+  "channelname" => $channel_name,
   ];
 echo json_encode($output);
 

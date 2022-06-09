@@ -129,7 +129,7 @@
             </td>
           </tr>
           <tr>
-            <td class="recording_button">&nbsp;APPKEY</td>
+            <td class="recording_button" style="display: none">&nbsp;APPKEY</td>
             <td>
               <input
                 type="text"
@@ -137,6 +137,7 @@
                 id="authorization"
                 spellcheck="false"
                 tabindex="3"
+                style="display: none"
               />
             </td>
           </tr>
@@ -217,7 +218,10 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script type="module">
     import { DataBaseAccessProxy } from "./databaseAccessProxy.js";
+    import { APPKEY } from "./Ami_voice/ApiDef.js";
 
+    // 現在選択中のチャンネル名
+      let currentChannelName = "";
     // 現在ログインしているユーザ名
     let currentUserName = "";
 
@@ -371,23 +375,43 @@
 
       // チャットテキスト一覧更新
       function refreshChatTextList() {
-        let channelName = "ch001";
+
+        // チャンネル名が指定されていない場合はスキップ
+        if (currentChannelName == "") {
+          return;
+        }
+
         // チャットテキスト一覧取得
-        DataBaseAccessProxy.GetChatList(channelName).then((chatList) => {
+        DataBaseAccessProxy.GetChatList(currentChannelName).then((chatList) => {
           // リストをクリア
           const chat_list = document.getElementById("id_chat_list");
           while (chat_list.firstChild) {
             chat_list.removeChild(chat_list.firstChild);
           } 
 
+          if (chatList == null){ return; }
+
           //console.log(chatList);
-          chatList.forEach((element) => {
-            let isMe = true;
-            if (element["username"] != currentUserName) {
-              isMe = false;
+
+          // 最大表示件数
+          const numOfItems = 13;
+          if (chatList.length >= numOfItems){
+            for (let index = chatList.length - numOfItems; index < chatList.length; index++){
+              let isMe = true;
+              if (chatList[index]["username"] != currentUserName) {
+                isMe = false;
+              }
+              displayChat(chatList[index]["chat"], isMe, chatList[index]["username"]);
             }
-            displayChat(element["chat"], isMe, element["username"]);
-          });
+          }else{
+            for (let index = 0; index < chatList.length; index++){
+              let isMe = true;
+              if (chatList[index]["username"] != currentUserName) {
+                isMe = false;
+              }
+              displayChat(chatList[index]["chat"], isMe, chatList[index]["username"]);
+            }
+          }
         });
       }
 
@@ -425,22 +449,26 @@
         );
 
         //console.log("認識されたテキスト：" + result.text);
-        // チャットテキスト送信
-        DataBaseAccessProxy.PostChatText(result.text).then(
-          (postSuccess) => {
-            //console.log(postSuccess);
-            // 送信結果チェック
-            if (postSuccess) {
-              let isMe = true;
-              let userName = "anonymous";
-              displayChat(result.text, isMe, userName);
-              //console.log("送信成功");
-            } else {
-              console.log("ERROR: チャット送信失敗");
-              //alert("チャット送信に失敗しました。");
+
+        // チャンネル名が選択されている場合に限りチャットを投稿
+        if (currentChannelName != "") {
+          // チャットテキスト送信
+          DataBaseAccessProxy.PostChatText(currentChannelName, result.text).then(
+            (postSuccess) => {
+              //console.log(postSuccess);
+              // 送信結果チェック
+              if (postSuccess) {
+                let isMe = true;
+                let userName = "anonymous";
+                displayChat(result.text, isMe, userName);
+                //console.log("送信成功");
+              } else {
+                console.log("ERROR: チャット送信失敗");
+                //alert("チャット送信に失敗しました。");
+              }
             }
-          }
-        );
+          );
+        }
       }
 
       // 各種イベントが通知された時に呼び出されます。
@@ -591,6 +619,96 @@
           toggle_optionss[i].style.cursor = "pointer";
         }
 
+        // 「チャンネル追加する」ボタンクリック時のイベントハンドラ
+        $("#id_addChannel").on("click", () => {
+          // チャンネル名の入力
+          const channelName = inputTextWithDialog("チャンネル名を入力してください");
+          if (channelName != null) {
+
+            // チャットテキスト送信
+            DataBaseAccessProxy.AddChannel(channelName).then((success) => {
+              //console.log(success);
+              // 送信結果チェック
+              if (success) {
+                // 現在選択中チャンネルの切替
+                currentChannelName = channelName;
+
+                // 親要素
+                var list = document.getElementById("id_channelListUl");
+                // 追加するチャンネル要素を作成
+                var li = document.createElement("li");
+                li.innerHTML = channelName;
+                li.className = "channelListItem";
+                // valueにlistの子要素数をセットして識別する
+                li.value = list.childElementCount;
+                // 末尾に追加
+                list.appendChild(li);
+              } else {
+                alert("チャンネルは既に登録されているかチャンネル追加に失敗しました。");
+              }
+            });
+          }
+        });
+
+        // 追加するチャンネル名の入力
+        // guideMessage：ダイアログに表示するガイド分
+        function inputTextWithDialog(guideMessage) {
+          // 入力ダイアログを表示
+          const inputText = window.prompt(guideMessage, "");
+          console.log("input text:" + inputText);
+          return inputText;
+        }
+
+        // チャンネル名をクリックしたらそのチャンネルの内容に切替
+        $(document).on("click", ".channelListItem", function (args) {
+          if (args.target.innerText == "") {
+            return;
+          }
+
+          // チャンネル切り替え
+          // console.log(
+          //   "channel change:" + currentChannelName + " to " + args.target.innerText
+          // );
+          // 現在選択中チャンネルの切替
+          currentChannelName = args.target.innerText;
+
+          // 表示コンテンツリフレッシュ
+          refreshChatTextList();
+        });
+
+        // チャンネルリストの更新
+        function updateChannelList() {
+          DataBaseAccessProxy.GetChannelList().then((channelList) => {
+            if (channelList == null){ return; }
+            //console.log(channelList);
+            // 親要素
+            var list = document.getElementById("id_channelListUl");
+
+            for (let index = 0; index < channelList.length; index++) {
+              // 追加するチャンネル要素を作成
+              var li = document.createElement("li");
+              li.innerHTML = channelList[index]["channel_name"];
+              li.className = "channelListItem";
+              // valueにlistの子要素数をセットして識別する
+              li.value = list.childElementCount;
+              // 末尾に追加
+              list.appendChild(li);
+            }
+            //console.log(list);
+          });
+        }
+        updateChannelList();
+
+        // チャンネル一覧の特定チャンネルクリック時イベントハンドラ
+        $("#id_channelListUl").on('click', 'li', function () {
+          //$("#id_channelListUl li.active").removeClass("bar");
+          $("#id_channelListUl li").each(function() {
+            $(this).removeClass("select_list_highlight");
+          })
+          // liクリック時にclass付与
+          $(this).addClass("select_list_highlight");
+        });
+
         // オンロード時処理
         window.onload = function () {
           // 呼び出しページからの引数(ログインユーザ名)を受け取り
@@ -598,6 +716,9 @@
           let value = query.split("=");
           currentUserName = decodeURIComponent(value[1]);
           //console.log("login user name: " + currentUserName);
+
+          // テキストボックス[APPKEY]にKEYをセットする
+          $("#authorization").val(APPKEY);
 
           // 画面ロード時に投稿済チャットの表示
           refreshChatTextList();
@@ -607,35 +728,6 @@
         version.innerHTML = Wrp.version;
         //console.log(Wrp);
       })();
-
-      // 「チャンネル追加する」ボタンクリック時のイベントハンドラ
-      $("#id_addChannel").on("click", () => {
-        // チャンネル名の入力
-        const channelName = inputTextWithDialog("チャンネル名を入力してください");
-        if (channelName != null) {
-          // 親要素
-          var list = document.getElementById("id_channelListUl");
-          // 追加するチャンネル要素を作成
-          var li = document.createElement("li");
-          li.innerHTML = channelName;
-          li.className = "channelListItem";
-          // valueにlistの子要素数をセットして識別する
-          li.value = list.childElementCount;
-          // 末尾に追加
-          list.appendChild(li);
-          console.log(list);
-          ContentProxy.CreateChannel(channelName);
-        }
-      });
-
-      // 追加するチャンネル名の入力
-      // guideMessage：ダイアログに表示するガイド分
-      function inputTextWithDialog(guideMessage) {
-        // 入力ダイアログを表示
-        const inputText = window.prompt(guideMessage, "");
-        console.log("input text:" + inputText);
-        return inputText;
-      }
     </script>
   </tr>
 </body>

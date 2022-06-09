@@ -74,7 +74,7 @@ td {
 #id_chat_view_field {
   width: 100%;
   /* min-height: 100vh; */
-  min-height: 82.7vh; 
+  min-height: 87vh; 
   padding: 7px 0 14px;
   box-sizing: border-box;
   background-color: #EEE;
@@ -193,14 +193,6 @@ td {
   width: 20%;
 }
 
-/* #id_chat_view_field {
-  width: 100%;
-  min-height: 100vh;
-  border-style: solid;
-  border-width: 1px;
-  border-color:black;
-}  */
-
 .main_content {
   display: flex;
   width: 100%;
@@ -230,3 +222,18 @@ td {
   width: 80%;
   height: 100%;
 } 
+
+#id_addChannel{
+  font-size: larger;
+}
+
+#id_channelListUl{
+  list-style: none;
+  font-size: larger;
+}
+
+.select_list_highlight {
+  /*ハイライトする時のスタイル*/
+  background-color:green;
+  color:white;
+}
