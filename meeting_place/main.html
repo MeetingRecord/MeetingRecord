@@ -203,6 +203,9 @@
       <script type="module">
         import { DataBaseAccessProxy } from "./databaseAccessProxy.js";
 
+        // 現在ログインしているユーザ名
+        let currentUserName = "";
+
         (function () {
           // <!--
           function log_(n, s) {
@@ -351,6 +354,28 @@
             }
           }
 
+          // チャットテキスト一覧更新
+          function refreshChatTextList() {
+            let channelName = "ch001";
+            // チャットテキスト一覧取得
+            DataBaseAccessProxy.GetChatList(channelName).then((chatList) => {
+              // リストをクリア
+              const chat_list = document.getElementById("id_chat_list");
+              while (chat_list.firstChild) {
+                chat_list.removeChild(chat_list.firstChild);
+              }
+
+              //console.log(chatList);
+              chatList.forEach((element) => {
+                let isMe = true;
+                if (element["username"] != currentUserName) {
+                  isMe = false;
+                }
+                displayChat(element["chat"], isMe, element["username"]);
+              });
+            });
+          }
+
           // 認識処理が確定した時に呼び出されます。
           function resultFinalized(result) {
             log_(this.name, "EVENT: resultFinalized(): result[" + result + "]");
@@ -401,12 +426,6 @@
                 }
               }
             );
-
-            // messages.insertBefore(
-            //   document.createElement("div"),
-            //   messages.lastChild
-            // ).innerHTML = result.text;
-            // messages.firstChild.style.borderBottom = "1px #ddd solid";
           }
 
           // 各種イベントが通知された時に呼び出されます。
@@ -556,6 +575,19 @@
             toggle_optionss[i].onclick = toggle_options;
             toggle_optionss[i].style.cursor = "pointer";
           }
+
+          // オンロード時処理
+          window.onload = function () {
+            // 呼び出しページからの引数(ログインユーザ名)を受け取り
+            let query = location.search;
+            let value = query.split("=");
+            currentUserName = decodeURIComponent(value[1]);
+            //console.log("login user name: " + currentUserName);
+
+            // 画面ロード時に投稿済チャットの表示
+            refreshChatTextList();
+            setInterval(refreshChatTextList, 1000);
+          };
 
           version.innerHTML = Wrp.version;
           //console.log(Wrp);

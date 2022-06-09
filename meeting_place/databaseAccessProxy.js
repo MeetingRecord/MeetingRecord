@@ -25,11 +25,14 @@ export class DataBaseAccessProxy {
   }
 
   // チャットリスト取得
-  static async GetChatList() {
+  // channelName    :一覧取得するチャンネル名
+  static async GetChatList(channelName) {
 
-    let result = await axios.post(SERVER_URL + SCRIPT_PATH + "getChatList.php", null);
-    //console.log(result.data.channelList);
-    return result.data.monsterList;
+    let params = new URLSearchParams();
+    params.append("channelName", channelName);
+    let result = await axios.post(SERVER_URL + SCRIPT_PATH + "getChatList.php", params);
+    //console.log(result.data.chatList);
+    return result.data.chatList;
   }
 
   // チャット投稿
