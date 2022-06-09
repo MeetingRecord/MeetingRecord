@@ -4,19 +4,41 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Bootstrap CSSの読み込み -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
     <title>Document</title>
+    <link rel="stylesheet" href="./user_register.css" />
   </head>
   <body>
-    <div>username: <input type="text" id="id_input_name" /></div>
-    <div>
-      password: <input type="text" id="id_input_password" autocomplete="off" />
+    <div class="user_register_screen">
+      <h1>User Registration</h1>
+      <img src="./img/app_icon_521px.png" alt="" />
+      <div class="user_id_input_area">
+        <div class="input_text_area">
+          <div class="input_name_area">
+            <p>名前</p>
+            <input type="text" id="id_input_name" autocomplete="off" />
+          </div>
+          <div class="input_password_area">
+            <p>P/W</p>
+            <input type="text" id="id_input_password" autocomplete="off" />
+          </div>
+        </div>
+        <div class="button_area">
+          <button class="btn btn-funky-moon" id="id_button_user_register">
+            登録
+          </button>
+          <button class="btn btn-funky-moon" id="id_button_to_login">
+            ログイン画面へ
+          </button>
+        </div>
+      </div>
     </div>
-    <div>
-      <button class="button_user_register" id="id_button_user_register">
-        Register
-      </button>
-    </div>
-    <a href="login.html">or login</a>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="module">
@@ -44,6 +66,13 @@
         // 入力をクリアする
         $("#id_input_name").val("");
         $("#id_input_password").val("");
+      });
+
+      /**********ユーザ登録ボタンクリックイベントハンドラ**********/
+      $("#id_button_to_login").on("click", () => {
+        $(document.body).fadeOut("slow", function () {
+          window.location.href = "./login.html";
+        });
       });
     </script>
   </body>
