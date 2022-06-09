@@ -218,7 +218,7 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script type="module">
     import { DataBaseAccessProxy } from "./databaseAccessProxy.js";
-    import { APPKEY } from "./Ami_voice/ApiDef.js";
+    import { APPKEY } from "./Ami_voice/apiDef.js";
 
     // 現在選択中のチャンネル名
       let currentChannelName = "";
@@ -355,21 +355,26 @@
         const ul = document.getElementById("id_chat_list");
         const li = document.createElement("li");
         // このdivにテキストを指定
-        const div = document.createElement("div");
-        div.textContent = text;
+        const divUserName = document.createElement("div");
+        divUserName.textContent = userName;
+        // このdivにテキストを指定
+        const divText = document.createElement("div");
+        divText.textContent = text;
 
         if (isMe) {
           // 自分
-          div.classList.add("chat-right");
+          divText.classList.add("chat-right");
           li.classList.add("right");
           ul.appendChild(li);
-          li.appendChild(div);
+          li.appendChild(divText);
         } else {
           // 自分以外のユーザ
+          divUserName.classList.add("chat-username");
+          divText.classList.add("chat-left");
           li.classList.add("left");
-          div.classList.add("chat-left");
           ul.appendChild(li);
-          li.appendChild(div);
+          li.appendChild(divUserName);
+          li.appendChild(divText);
         }
       }
 
@@ -722,7 +727,7 @@
 
           // 画面ロード時に投稿済チャットの表示
           refreshChatTextList();
-          setInterval(refreshChatTextList, 1000);
+          setInterval(refreshChatTextList, 100000);
         };
 
         version.innerHTML = Wrp.version;

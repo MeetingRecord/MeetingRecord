@@ -110,6 +110,10 @@ td {
   word-wrap: break-word;
 }
 
+#id_chat_list>li>.chat-username {
+  font-size: 1.0rem;
+}
+
 #id_chat_list>li>div {
   display: inline-block;
   box-sizing: border-box;
@@ -176,6 +180,11 @@ td {
 
 .right {
   text-align: right;
+}
+
+.chat-username {
+  color: white;
+  font-size: 1px;
 }
 
 .channelListManagement {
