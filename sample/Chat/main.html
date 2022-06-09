@@ -25,6 +25,9 @@
     <script type="module">
       import { DataBaseAccessProxy } from "./databaseAccessProxy.js";
 
+      // 現在ログインしているユーザ名
+      let currentUserName = "";
+
       // 送信済みチャットを画面表示する関数
       // text     :送信済みチャット
       // isMe     :チャット送信者が自分であるかのフラグ
@@ -55,6 +58,28 @@
         }
       }
 
+      // チャットテキスト一覧更新
+      function refreshChatTextList() {
+        let channelName = "ch001";
+        // チャットテキスト一覧取得
+        DataBaseAccessProxy.GetChatList(channelName).then((chatList) => {
+          // リストをクリア
+          const chat_list = document.getElementById("id_chat_list");
+          while (chat_list.firstChild) {
+            chat_list.removeChild(chat_list.firstChild);
+          }
+
+          //console.log(chatList);
+          chatList.forEach((element) => {
+            let isMe = true;
+            if (element["username"] != currentUserName) {
+              isMe = false;
+            }
+            displayChat(element["chat"], isMe, element["username"]);
+          });
+        });
+      }
+
       // チャット送信ボタン
       $("#id_button_chat_send").on("click", () => {
         let postTargetText = $("#id_chat_input").val();
@@ -72,7 +97,23 @@
             alert("チャット送信に失敗しました。");
           }
         });
+
+        // 送信後にテキストをクリアする
+        $("#id_chat_input").val("");
       });
+
+      // オンロード時処理
+      window.onload = function () {
+        // 呼び出しページからの引数(ログインユーザ名)を受け取り
+        let query = location.search;
+        let value = query.split("=");
+        currentUserName = decodeURIComponent(value[1]);
+        //console.log("login user name: " + currentUserName);
+
+        // 画面ロード時に投稿済チャットの表示
+        refreshChatTextList();
+        setInterval(refreshChatTextList, 1000);
+      };
     </script>
   </body>
 </html>
