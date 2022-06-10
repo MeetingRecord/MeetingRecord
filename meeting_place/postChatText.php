@@ -26,7 +26,7 @@ $channel_name = $_POST["channelname"];
 $chattext = $_POST["chattext"];
 $channel_id = GetChannelIdFromChannelName($channel_name);
 
-$sql = 'INSERT INTO chat_table(id, channel_id, user_id, chat, created_at) VALUES(NULL, :channel_id, :user_id, :chat, sysdate())';
+$sql = 'INSERT INTO chat_table(id, channel_id, user_id, chat, post_time) VALUES(NULL, :channel_id, :user_id, :chat, sysdate())';
 
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':channel_id', $channel_id, PDO::PARAM_STR);

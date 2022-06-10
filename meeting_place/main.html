@@ -347,34 +347,42 @@
       // text     :送信済みチャット
       // isMe     :チャット送信者が自分であるかのフラグ
       // userName :チャット送信者名
-      function displayChat(text, isMe, userName) {
+      // dateTime :チャット送信時刻
+      function displayChat(text, isMe, userName, dateTime) {
         // 一番下までスクロール
         const field = document.getElementById("id_chat_view_field");
         field.scroll(0, field.scrollHeight - field.clientHeight);
 
         const ul = document.getElementById("id_chat_list");
         const li = document.createElement("li");
-        // このdivにテキストを指定
+        // 送信時刻
+        const divDateTime = document.createElement("div");
+        divDateTime.textContent = dateTime;
+        // 送信者
         const divUserName = document.createElement("div");
         divUserName.textContent = userName;
-        // このdivにテキストを指定
+        // テキスト
         const divText = document.createElement("div");
         divText.textContent = text;
 
         if (isMe) {
           // 自分
+          divDateTime.classList.add("chat-username");
           divText.classList.add("chat-right");
           li.classList.add("right");
           ul.appendChild(li);
+          li.appendChild(divDateTime);
           li.appendChild(divText);
         } else {
           // 自分以外のユーザ
+          divDateTime.classList.add("chat-username");
           divUserName.classList.add("chat-username");
           divText.classList.add("chat-left");
           li.classList.add("left");
           ul.appendChild(li);
           li.appendChild(divUserName);
           li.appendChild(divText);
+          li.appendChild(divDateTime);
         }
       }
 
@@ -399,14 +407,15 @@
           //console.log(chatList);
 
           // 最大表示件数
-          const numOfItems = 13;
+          const numOfItems = 12;
           if (chatList.length >= numOfItems){
             for (let index = chatList.length - numOfItems; index < chatList.length; index++){
+              console.log(chatList[index]);
               let isMe = true;
               if (chatList[index]["username"] != currentUserName) {
                 isMe = false;
               }
-              displayChat(chatList[index]["chat"], isMe, chatList[index]["username"]);
+              displayChat(chatList[index]["chat"], isMe, chatList[index]["username"], chatList[index]["post_time"]);
             }
           }else{
             for (let index = 0; index < chatList.length; index++){
@@ -414,7 +423,7 @@
               if (chatList[index]["username"] != currentUserName) {
                 isMe = false;
               }
-              displayChat(chatList[index]["chat"], isMe, chatList[index]["username"]);
+              displayChat(chatList[index]["chat"], isMe, chatList[index]["username"], chatList[index]["post_time"]);
             }
           }
         });
@@ -462,12 +471,7 @@
             (postSuccess) => {
               //console.log(postSuccess);
               // 送信結果チェック
-              if (postSuccess) {
-                let isMe = true;
-                let userName = "anonymous";
-                displayChat(result.text, isMe, userName);
-                //console.log("送信成功");
-              } else {
+              if (!postSuccess) {
                 console.log("ERROR: チャット送信失敗");
                 //alert("チャット送信に失敗しました。");
               }
@@ -727,7 +731,7 @@
 
           // 画面ロード時に投稿済チャットの表示
           refreshChatTextList();
-          setInterval(refreshChatTextList, 100000);
+          setInterval(refreshChatTextList, 1000);
         };
 
         version.innerHTML = Wrp.version;

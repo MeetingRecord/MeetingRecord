@@ -24,7 +24,7 @@ $channelname = $_POST["channelname"];
 $channel_id = GetChannelIdFromChannelName($channelname);
 
 // SQL作成&実行
-$sql = 'SELECT * FROM chat_table LEFT OUTER JOIN users_table ON chat_table.user_id = users_table.id WHERE channel_id=:channel_id ORDER BY chat_table.created_at ASC';
+$sql = 'SELECT * FROM chat_table LEFT OUTER JOIN users_table ON chat_table.user_id = users_table.id WHERE channel_id=:channel_id ORDER BY post_time ASC';
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':channel_id', $channel_id, PDO::PARAM_STR);
 

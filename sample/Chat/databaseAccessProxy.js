@@ -35,6 +35,13 @@ export class DataBaseAccessProxy {
     return result.data.result && (result.data.detail == "NORMAL_END");
   }
 
+  // チャンネルリスト取得
+  static async GetChannelList() {
+
+    let result = await axios.post(SERVER_URL + SCRIPT_PATH + "getChannelList.php", null);
+    //console.log(result.data.channelList);
+    return result.data.channelList;
+  }
 
   // チャットリスト取得
   // channelName    :チャンネル名

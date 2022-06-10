@@ -3,3 +3,7 @@ sample/Chat/databaseDef.php
 meeting_place/databaseDef.php
 meeting_place/serverDef.js
 meeting_place/Ami_voice/apiDef.js
+sample/Chat/databaseAccessProxy.js.bak
+sample/Chat/databaseDef.php.bak
+sample/Chat/getChatList.php.bak
+sample/Chat/postChatText.php.bak
